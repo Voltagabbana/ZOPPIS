@@ -1,16 +1,11 @@
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-from prompt_schema import prompt
 import base64
-# import absl.logging
-# absl.logging.set_verbosity(absl.logging.INFO)
-# absl.logging.set_verbosity(absl.logging.ERROR)  # Mostra solo errori gravi
 
-# import grpc
-# options = [('grpc.max_send_message_length', 1024*1024*50),  # 50MB
-#            ('grpc.max_receive_message_length', 1024*1024*50)]  # 50MB
-# channel = grpc.insecure_channel('localhost:50051', options=options)
+from prompt_schema import prompt
+from parser import path_input
+from parser import path_output
 
 load_dotenv()
 
@@ -32,13 +27,19 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
     #system_instruction="Sei un venditore, quindi i campi vuoti non li sostituisci con Null ma con valori inventati!" # solo come esperimento..
 )
-doc_path = r"C:\Users\enduser\Desktop\PythonPostLaurea\ZOPPIS\ZOPPIS\data\A4M_15122024_006852 copy.pdf" # Replace with the actual path to your local PDF
 
-# Read and encode the local file
+doc_path = path_input # Replace with the actual path to your local PDF
+
 with open(doc_path, "rb") as doc_file:
     doc_data = base64.standard_b64encode(doc_file.read()).decode("utf-8")
 
-
+print("Inizio generazione dell'output...")
 response = model.generate_content([{'mime_type': 'application/pdf', 'data': doc_data}, prompt])
 
-print(response.text)
+
+output_dir = path_output
+output_file_path = os.path.join(output_dir, 'response_output.txt')
+
+with open(output_file_path, 'w', encoding='utf-8') as file:
+    file.write(response.text)
+print(f"Risposta scritta nel file: {output_file_path}")

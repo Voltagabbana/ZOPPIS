@@ -9,3 +9,4 @@
 *.pdf
 *.PDF
 *.env
+data/*

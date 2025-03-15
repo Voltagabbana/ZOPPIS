@@ -9,4 +9,5 @@
 *.pdf
 *.PDF
 *.env
+*.parquet
 data/*
